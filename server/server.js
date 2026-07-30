@@ -30,7 +30,11 @@ app.use("/api/rentals", rentalRoutes);
 app.use("/api/students", studentRoutes);
 
 // Serve frontend static files
-app.use(express.static(path.join(__dirname, "../Frontend")));
+app.use(express.static(path.join(__dirname, "../frontend")));
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/login.html"));
+});
 
 const PORT = process.env.PORT || 3000;
 
