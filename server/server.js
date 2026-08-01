@@ -14,6 +14,8 @@ const studentRoutes = require("./routes/studentRoutes");
 
 const app = express();
 
+console.log("MONGO_URI is set:", !!process.env.MONGO_URI);
+
 // Connect to MongoDB
 connectDB();
 
