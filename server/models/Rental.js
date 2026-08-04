@@ -6,6 +6,11 @@ const rentalSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    type: {
+        type: String,
+        enum: ["Income", "Expense"],
+        default: "Income"
+    },
     tenantName: {
         type: String,
         required: true

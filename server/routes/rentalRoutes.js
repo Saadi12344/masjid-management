@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
     try {
-        const { tenantName, property, amount, phone, startDate, status } = req.body;
+        const { type, tenantName, property, amount, phone, startDate, status } = req.body;
 
         if (!tenantName || !property || !amount || !phone || !startDate) {
             return res.status(400).json({ message: "Please fill all required fields" });
@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
         const count = await Rental.countDocuments();
         const rentalId = "RNT-" + String(count + 1).padStart(4, "0");
 
-        const rental = await Rental.create({ rentalId, tenantName, property, amount, phone, startDate, status });
+        const rental = await Rental.create({ rentalId, type, tenantName, property, amount, phone, startDate, status });
         res.status(201).json(rental);
 
     } catch (err) {

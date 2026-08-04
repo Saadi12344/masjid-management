@@ -30,8 +30,41 @@ function statusBadge(status) {
         : '<span class="badge bg-danger">Vacant</span>';
 }
 
+function typeBadge(type) {
+    return type === "Expense"
+        ? '<span class="badge bg-danger">Expense</span>'
+        : '<span class="badge bg-success">Income</span>';
+}
+
+function renderSummary(list = rentals) {
+    const totalIncome = list.filter(r => r.type !== "Expense").reduce((sum, r) => sum + Number(r.amount), 0);
+    const totalExpense = list.filter(r => r.type === "Expense").reduce((sum, r) => sum + Number(r.amount), 0);
+    const net = totalIncome - totalExpense;
+
+    document.getElementById("rentalSummary").innerHTML = `
+        <div class="col-6 col-lg-4">
+            <div class="card stat-card p-4 text-center">
+                <h6 class="text-secondary mb-2">Rental Income</h6>
+                <h3 class="fw-bold text-success mb-0">Rs. ${totalIncome.toLocaleString()}</h3>
+            </div>
+        </div>
+        <div class="col-6 col-lg-4">
+            <div class="card stat-card p-4 text-center">
+                <h6 class="text-secondary mb-2">Rental Expense</h6>
+                <h3 class="fw-bold text-danger mb-0">Rs. ${totalExpense.toLocaleString()}</h3>
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="card stat-card p-4 text-center">
+                <h6 class="text-secondary mb-2">Net</h6>
+                <h3 class="fw-bold mb-0" style="color:${net >= 0 ? '#198754' : '#dc3545'};">Rs. ${net.toLocaleString()}</h3>
+            </div>
+        </div>
+    `;
+}
+
 async function loadRentals() {
-    tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-secondary py-4">Loading...</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-secondary py-4">Loading...</td></tr>`;
     try {
         const response = await fetch(API_URL, { headers: authHeaders() });
         if (handleAuthError(response)) return;
@@ -39,7 +72,7 @@ async function loadRentals() {
         document.getElementById("rentalId").value = generateNextId();
         render();
     } catch (err) {
-        tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-danger py-4">Could not reach server. Is the backend running?</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-danger py-4">Could not reach server. Is the backend running?</td></tr>`;
     }
 }
 
@@ -50,15 +83,17 @@ function generateNextId() {
 
 function render(list = rentals) {
     tableBody.innerHTML = "";
+    renderSummary(list);
+
     if (list.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-secondary py-4">No rentals recorded yet.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-secondary py-4">No rental records yet.</td></tr>`;
         return;
     }
     list.forEach(r => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${r.rentalId}</td><td>${r.tenantName}</td><td>${r.property}</td><td>Rs. ${Number(r.amount).toLocaleString()}</td>
-            <td>${r.phone}</td><td>${r.startDate}</td><td>${statusBadge(r.status)}</td>
+            <td>${r.rentalId}</td><td>${typeBadge(r.type)}</td><td>${r.tenantName}</td><td>${r.property}</td>
+            <td>Rs. ${Number(r.amount).toLocaleString()}</td><td>${r.phone}</td><td>${r.startDate}</td><td>${statusBadge(r.status)}</td>
             <td>
                 <button type="button" class="btn btn-sm btn-primary edit-btn" data-id="${r._id}"><i class="fa-solid fa-pen"></i></button>
                 <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="${r._id}"><i class="fa-solid fa-trash"></i></button>
@@ -69,6 +104,7 @@ function render(list = rentals) {
 
 form.addEventListener("submit", async function (e) {
     e.preventDefault();
+    const type = document.getElementById("type").value;
     const tenantName = document.getElementById("tenantName").value.trim();
     const property = document.getElementById("property").value.trim();
     const amount = document.getElementById("amount").value.trim();
@@ -84,16 +120,16 @@ form.addEventListener("submit", async function (e) {
     try {
         const response = await fetch(API_URL, {
             method: "POST", headers: authHeaders(),
-            body: JSON.stringify({ tenantName, property, amount, phone, startDate, status })
+            body: JSON.stringify({ type, tenantName, property, amount, phone, startDate, status })
         });
         if (handleAuthError(response)) return;
         const data = await response.json();
         if (!response.ok) {
-            Swal.fire({ icon: "error", title: "Error", text: data.message || "Could not save rental." });
+            Swal.fire({ icon: "error", title: "Error", text: data.message || "Could not save record." });
             return;
         }
         form.reset();
-        Swal.fire({ icon: "success", title: "Success", text: "Rental added successfully." });
+        Swal.fire({ icon: "success", title: "Success", text: "Record added successfully." });
         loadRentals();
     } catch (err) {
         Swal.fire({ icon: "error", title: "Connection Error", text: "Could not reach the server." });
@@ -112,7 +148,7 @@ tableBody.addEventListener("click", async function (e) {
     if (delBtn) {
         const id = delBtn.dataset.id;
         Swal.fire({
-            title: "Delete Rental?", text: "This action cannot be undone.", icon: "warning",
+            title: "Delete Record?", text: "This action cannot be undone.", icon: "warning",
             showCancelButton: true, confirmButtonColor: "#dc3545", cancelButtonColor: "#6c757d", confirmButtonText: "Yes, Delete"
         }).then(async (result) => {
             if (!result.isConfirmed) return;
@@ -120,10 +156,10 @@ tableBody.addEventListener("click", async function (e) {
                 const response = await fetch(`${API_URL}/${id}`, { method: "DELETE", headers: authHeaders() });
                 if (handleAuthError(response)) return;
                 if (!response.ok) {
-                    Swal.fire({ icon: "error", title: "Error", text: "Could not delete rental." });
+                    Swal.fire({ icon: "error", title: "Error", text: "Could not delete record." });
                     return;
                 }
-                Swal.fire({ icon: "success", title: "Deleted", text: "Rental deleted successfully." });
+                Swal.fire({ icon: "success", title: "Deleted", text: "Record deleted successfully." });
                 loadRentals();
             } catch (err) {
                 Swal.fire({ icon: "error", title: "Connection Error", text: "Could not reach the server." });
@@ -135,6 +171,7 @@ tableBody.addEventListener("click", async function (e) {
         const id = editBtn.dataset.id;
         const rental = rentals.find(r => r._id === id);
         editingId = id;
+        document.getElementById("editType").value = rental.type || "Income";
         document.getElementById("editTenantName").value = rental.tenantName;
         document.getElementById("editProperty").value = rental.property;
         document.getElementById("editAmount").value = rental.amount;
@@ -157,6 +194,7 @@ updateBtn.addEventListener("click", async function () {
     }
 
     const body = {
+        type: document.getElementById("editType").value,
         tenantName, property, amount, phone,
         startDate: document.getElementById("editStartDate").value,
         status: document.getElementById("editStatus").value
@@ -166,11 +204,11 @@ updateBtn.addEventListener("click", async function () {
         const response = await fetch(`${API_URL}/${editingId}`, { method: "PUT", headers: authHeaders(), body: JSON.stringify(body) });
         if (handleAuthError(response)) return;
         if (!response.ok) {
-            Swal.fire({ icon: "error", title: "Error", text: "Could not update rental." });
+            Swal.fire({ icon: "error", title: "Error", text: "Could not update record." });
             return;
         }
         editModal.hide();
-        Swal.fire({ icon: "success", title: "Updated Successfully", text: "Rental information has been updated." });
+        Swal.fire({ icon: "success", title: "Updated Successfully", text: "Record has been updated." });
         loadRentals();
     } catch (err) {
         Swal.fire({ icon: "error", title: "Connection Error", text: "Could not reach the server." });
@@ -180,11 +218,12 @@ updateBtn.addEventListener("click", async function () {
 document.getElementById("exportBtn").addEventListener("click", function () {
     exportToCSV("rentals.csv", [
         { key: "rentalId", label: "ID" },
-        { key: "tenantName", label: "Tenant" },
+        { key: "type", label: "Type" },
+        { key: "tenantName", label: "Tenant/Party" },
         { key: "property", label: "Property" },
-        { key: "amount", label: "Rent Amount" },
+        { key: "amount", label: "Amount" },
         { key: "phone", label: "Phone" },
-        { key: "startDate", label: "Start Date" },
+        { key: "startDate", label: "Date" },
         { key: "status", label: "Status" }
     ], rentals);
 });

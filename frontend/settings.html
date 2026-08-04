@@ -14,9 +14,14 @@
 <body>
 
 <nav class="app-topbar">
-    <div class="topbar-brand">
-        <i class="fa-solid fa-mosque"></i>
-        <span>Jama Masjid As-Salam</span>
+    <div class="d-flex align-items-center gap-3">
+        <button type="button" class="sidebar-toggle-btn d-lg-none" id="sidebarToggle" title="Menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="topbar-brand">
+            <i class="fa-solid fa-mosque"></i>
+            <span id="topbarBrandName">Jama Masjid As-Salam</span>
+        </div>
     </div>
     <div class="d-flex align-items-center gap-3">
         <button type="button" class="theme-toggle" id="themeToggle" title="Toggle dark mode">
@@ -28,7 +33,9 @@
     </div>
 </nav>
 
-<div class="app-sidebar">
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<div class="app-sidebar" id="appSidebar">
     <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link" href="dashboard.html">

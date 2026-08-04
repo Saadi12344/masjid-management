@@ -52,6 +52,9 @@ settingsForm.addEventListener("submit", async function (e) {
             Swal.fire({ icon: "error", title: "Error", text: "Could not save settings." });
             return;
         }
+        localStorage.setItem("masjid_name_cache", body.masjidName);
+        const brandNameEl = document.getElementById("topbarBrandName");
+        if (brandNameEl) brandNameEl.textContent = body.masjidName;
         Swal.fire({ icon: "success", title: "Saved", text: "Masjid information updated successfully." });
     } catch (err) {
         Swal.fire({ icon: "error", title: "Connection Error", text: "Could not reach the server." });

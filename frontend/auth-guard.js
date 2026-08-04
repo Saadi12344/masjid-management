@@ -56,6 +56,42 @@ document.addEventListener("DOMContentLoaded", function () {
             applyThemeIcon();
         });
     }
+
+    // Mobile sidebar toggle
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebar = document.getElementById("appSidebar");
+    const backdrop = document.getElementById("sidebarBackdrop");
+
+    function closeSidebar() {
+        if (sidebar) sidebar.classList.remove("open");
+        if (backdrop) backdrop.classList.remove("show");
+    }
+
+    if (sidebarToggle && sidebar && backdrop) {
+        sidebarToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("open");
+            backdrop.classList.toggle("show");
+        });
+        backdrop.addEventListener("click", closeSidebar);
+    }
+
+    // Dynamic masjid name in navbar (from Settings, cached for instant paint)
+    const brandNameEl = document.getElementById("topbarBrandName");
+    if (brandNameEl) {
+        const cachedName = localStorage.getItem("masjid_name_cache");
+        if (cachedName) brandNameEl.textContent = cachedName;
+
+        const token = localStorage.getItem("masjid_token");
+        fetch("/api/settings", { headers: { "Authorization": "Bearer " + token } })
+            .then(res => res.ok ? res.json() : null)
+            .then(settings => {
+                if (settings && settings.masjidName) {
+                    brandNameEl.textContent = settings.masjidName;
+                    localStorage.setItem("masjid_name_cache", settings.masjidName);
+                }
+            })
+            .catch(() => {});
+    }
 });
 
 

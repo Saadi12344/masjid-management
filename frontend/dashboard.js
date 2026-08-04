@@ -32,7 +32,7 @@ async function loadDashboard() {
     const totalExpenses = expenses.reduce((sum, x) => sum + Number(x.amount), 0);
     const cashInHand = totalDonations - totalExpenses;
     const totalRentalIncome = rentals
-        .filter(r => r.status === "Active")
+        .filter(r => r.status === "Active" && r.type !== "Expense")
         .reduce((sum, r) => sum + Number(r.amount), 0);
 
     document.getElementById("totalStaff").textContent = staff.length;
