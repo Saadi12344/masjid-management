@@ -1,5 +1,5 @@
 const express = require("express");
-const PrayerTime = require("../models/PrayerTime");
+const PrayerTime = require("../models/Prayers");
 const protect = require("../middleware/auth");
 
 const router = express.Router();
