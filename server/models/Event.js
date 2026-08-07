@@ -1,34 +1,30 @@
 const mongoose = require("mongoose");
 
-const staffSchema = new mongoose.Schema({
-    staffId: {
+const eventSchema = new mongoose.Schema({
+    eventId: {
         type: String,
         required: true,
         unique: true
     },
-    name: {
+    eventName: {
         type: String,
         required: true
     },
-    designation: {
+    date: {
         type: String,
         required: true
     },
-    salary: {
-        type: Number,
+    time: {
+        type: String,
         required: true
     },
-    cnic: {
+    venue: {
+        type: String,
+        required: true
+    },
+    description: {
         type: String
-    },
-    phone: {
-        type: String,
-        required: true
-    },
-    city: {
-        type: String,
-        required: true
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model("Staff", staffSchema);
+module.exports = mongoose.model("Event", eventSchema);
