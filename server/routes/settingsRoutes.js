@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.use(protect);
 
+// Get settings (create default doc on first run)
 router.get("/", async (req, res) => {
     try {
         let settings = await Settings.findOne();
@@ -21,6 +22,7 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Update settings
 router.put("/", async (req, res) => {
     try {
         let settings = await Settings.findOne();

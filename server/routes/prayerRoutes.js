@@ -1,5 +1,5 @@
 const express = require("express");
-const PrayerTime = require("../models/Prayers");
+const PrayerTime = require("../models/PrayerTime");
 const protect = require("../middleware/auth");
 
 const router = express.Router();
@@ -15,6 +15,7 @@ const DEFAULT_TIMES = [
     { name: "Jumma", azan: "13:15", jamaat: "13:45" }
 ];
 
+// Get all prayer timings (seed defaults on first run)
 router.get("/", async (req, res) => {
     try {
         const count = await PrayerTime.countDocuments();
@@ -31,6 +32,7 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Update a prayer's timing by its name (Fajr, Zuhr, etc.)
 router.put("/:name", async (req, res) => {
     try {
         const { azan, jamaat } = req.body;

@@ -1,34 +1,32 @@
 const mongoose = require("mongoose");
 
-const staffSchema = new mongoose.Schema({
-    staffId: {
+const feePaymentSchema = new mongoose.Schema({
+    paymentId: {
         type: String,
         required: true,
         unique: true
     },
-    name: {
+    studentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Student",
+        required: true
+    },
+    studentName: {
         type: String,
         required: true
     },
-    designation: {
-        type: String,
-        required: true
-    },
-    salary: {
+    amount: {
         type: Number,
         required: true
     },
-    cnic: {
-        type: String
-    },
-    phone: {
+    month: {
         type: String,
         required: true
     },
-    city: {
+    date: {
         type: String,
         required: true
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model("Staff", staffSchema);
+module.exports = mongoose.model("FeePayment", feePaymentSchema);

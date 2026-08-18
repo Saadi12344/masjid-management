@@ -14,6 +14,8 @@ const studentRoutes = require("./routes/studentRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const prayerRoutes = require("./routes/prayerRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
+const userRoutes = require("./routes/userRoutes");
+const feePaymentRoutes = require("./routes/feePaymentRoutes");
 
 const app = express();
 
@@ -36,6 +38,8 @@ app.use("/api/students", studentRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/prayer", prayerRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/fee-payments", feePaymentRoutes);
 
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, "../frontend")));

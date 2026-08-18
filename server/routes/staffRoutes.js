@@ -4,8 +4,12 @@ const protect = require("../middleware/auth");
 
 const router = express.Router();
 
+// All staff routes require login
 router.use(protect);
 
+// ==========================
+// Get all staff
+// ==========================
 router.get("/", async (req, res) => {
     try {
         const staff = await Staff.find().sort({ createdAt: -1 });
@@ -15,6 +19,9 @@ router.get("/", async (req, res) => {
     }
 });
 
+// ==========================
+// Add new staff
+// ==========================
 router.post("/", async (req, res) => {
     try {
         const { name, designation, salary, cnic, phone, city } = req.body;
@@ -34,6 +41,9 @@ router.post("/", async (req, res) => {
     }
 });
 
+// ==========================
+// Update staff
+// ==========================
 router.put("/:id", async (req, res) => {
     try {
         const staff = await Staff.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -49,6 +59,9 @@ router.put("/:id", async (req, res) => {
     }
 });
 
+// ==========================
+// Delete staff
+// ==========================
 router.delete("/:id", async (req, res) => {
     try {
         const staff = await Staff.findByIdAndDelete(req.params.id);
