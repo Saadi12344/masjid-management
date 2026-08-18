@@ -25,12 +25,12 @@ let editingName = null;
 async function loadTimes() {
     tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-secondary py-4">Loading...</td></tr>`;
     try {
-        const response = await fetchWithRetry(API_URL, { headers: authHeaders() }, 1, 8000);
+        const response = await fetch(API_URL, { headers: authHeaders() });
         if (handleAuthError(response)) return;
         times = await response.json();
         render();
     } catch (err) {
-        tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-secondary py-4">Server is taking a moment to wake up — please refresh in a few seconds.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-danger py-4">Could not reach server. Is the backend running?</td></tr>`;
     }
 }
 

@@ -5,7 +5,7 @@ function authHeaders() {
 
 async function fetchApi(url) {
     try {
-        const response = await fetchWithRetry(url, { headers: authHeaders() }, 1, 8000);
+        const response = await fetch(url, { headers: authHeaders() });
         if (response.status === 401) {
             localStorage.removeItem("masjid_token");
             localStorage.removeItem("masjid_user");
@@ -20,19 +20,17 @@ async function fetchApi(url) {
 }
 
 async function loadDashboard() {
-    const [staff, donations, expenses, rentals, students, feePayments] = await Promise.all([
+    const [staff, donations, expenses, rentals, students] = await Promise.all([
         fetchApi("/api/staff"),
         fetchApi("/api/donations"),
         fetchApi("/api/expenses"),
         fetchApi("/api/rentals"),
-        fetchApi("/api/students"),
-        fetchApi("/api/fee-payments")
+        fetchApi("/api/students")
     ]);
 
     const totalDonations = donations.reduce((sum, d) => sum + Number(d.amount), 0);
-    const totalFees = feePayments.reduce((sum, p) => sum + Number(p.amount), 0);
     const totalExpenses = expenses.reduce((sum, x) => sum + Number(x.amount), 0);
-    const cashInHand = totalDonations + totalFees - totalExpenses;
+    const cashInHand = totalDonations - totalExpenses;
     const totalRentalIncome = rentals
         .filter(r => r.status === "Active" && r.type !== "Expense")
         .reduce((sum, r) => sum + Number(r.amount), 0);

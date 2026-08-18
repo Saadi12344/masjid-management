@@ -23,7 +23,6 @@ let allDonations = [];
 let allExpenses = [];
 let allStudents = [];
 let allRentals = [];
-let allFeePayments = [];
 
 function filterByDate(list) {
     const from = document.getElementById("fromDate").value;
@@ -39,18 +38,16 @@ function filterByDate(list) {
 function renderReports() {
     const donations = filterByDate(allDonations);
     const expenses = filterByDate(allExpenses);
-    const feePayments = filterByDate(allFeePayments);
 
     const totalDonations = donations.reduce((sum, d) => sum + Number(d.amount), 0);
-    const totalFees = feePayments.reduce((sum, p) => sum + Number(p.amount), 0);
     const totalExpenses = expenses.reduce((sum, x) => sum + Number(x.amount), 0);
-    const balance = totalDonations + totalFees - totalExpenses;
+    const balance = totalDonations - totalExpenses;
 
     document.getElementById("summaryCards").innerHTML = `
         <div class="col-6 col-lg-3">
             <div class="card stat-card p-4 text-center">
-                <h6 class="text-secondary mb-2">Donations + Fees</h6>
-                <h3 class="fw-bold text-success mb-0">Rs. ${(totalDonations + totalFees).toLocaleString()}</h3>
+                <h6 class="text-secondary mb-2">Total Donations</h6>
+                <h3 class="fw-bold text-success mb-0">Rs. ${totalDonations.toLocaleString()}</h3>
             </div>
         </div>
         <div class="col-6 col-lg-3">
@@ -103,19 +100,17 @@ function renderReports() {
 }
 
 async function loadReports() {
-    const [donations, expenses, students, rentals, feePayments] = await Promise.all([
+    const [donations, expenses, students, rentals] = await Promise.all([
         fetchApi("/api/donations"),
         fetchApi("/api/expenses"),
         fetchApi("/api/students"),
-        fetchApi("/api/rentals"),
-        fetchApi("/api/fee-payments")
+        fetchApi("/api/rentals")
     ]);
 
     allDonations = donations;
     allExpenses = expenses;
     allStudents = students;
     allRentals = rentals;
-    allFeePayments = feePayments;
 
     renderReports();
 }

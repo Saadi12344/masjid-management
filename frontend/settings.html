@@ -168,54 +168,12 @@
         </div>
     </div>
 
-    <div class="form-card card mt-4" id="userManagementSection" style="display:none;">
-        <div class="card-header"><i class="fa-solid fa-user-shield"></i> Manage Staff Accounts</div>
-        <div class="card-body">
-            <p class="text-secondary small mb-3">Create login accounts for your staff so they can access the system. Only admins can see this section.</p>
-
-            <form id="createUserForm">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="newUserName" placeholder="Enter Name">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" id="newUserEmail" placeholder="email@example.com">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-control" id="newUserPassword" placeholder="Min. 6 characters">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Role</label>
-                        <select class="form-select" id="newUserRole">
-                            <option value="staff">Staff</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                    </div>
-                    <div class="col-md-1 d-flex align-items-end">
-                        <button type="submit" class="btn btn-brand w-100"><i class="fa-solid fa-plus"></i></button>
-                    </div>
-                </div>
-            </form>
-
-            <div class="table-responsive mt-4">
-                <table class="table table-hover align-middle mb-0">
-                    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead>
-                    <tbody id="usersTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
 
 </div>
 
 <script src="auth-guard.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="utils.js"></script>
 <script src="settings.js"></script>
 </body>
 </html>

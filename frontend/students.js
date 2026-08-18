@@ -20,14 +20,9 @@ const tableBody = document.getElementById("tableBody");
 const searchBox = document.getElementById("searchBox");
 const updateBtn = document.getElementById("updateBtn");
 const editModal = new bootstrap.Modal(document.getElementById("editModal"));
-const feeModal = new bootstrap.Modal(document.getElementById("feeModal"));
-const saveFeeBtn = document.getElementById("saveFeeBtn");
-const feeTableBody = document.getElementById("feeTableBody");
 
 let students = [];
 let editingId = null;
-let currentFeeStudent = null;
-let feePayments = [];
 
 async function loadStudents() {
     tableBody.innerHTML = `<tr><td colspan="7" class="text-center text-secondary py-4">Loading...</td></tr>`;
@@ -59,7 +54,6 @@ function render(list = students) {
             <td>${s.studentId}</td><td>${s.studentName}</td><td>${s.fatherName}</td><td>${s.studentClass}</td>
             <td>Rs. ${Number(s.fee).toLocaleString()}</td><td>${s.phone}</td>
             <td>
-                <button type="button" class="btn btn-sm btn-success fee-btn" data-id="${s._id}" title="Record Fee Payment"><i class="fa-solid fa-money-bill"></i></button>
                 <button type="button" class="btn btn-sm btn-primary edit-btn" data-id="${s._id}"><i class="fa-solid fa-pen"></i></button>
                 <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="${s._id}"><i class="fa-solid fa-trash"></i></button>
             </td>`;
@@ -108,19 +102,6 @@ searchBox.addEventListener("keyup", function () {
 tableBody.addEventListener("click", async function (e) {
     const delBtn = e.target.closest(".delete-btn");
     const editBtn = e.target.closest(".edit-btn");
-    const feeBtn = e.target.closest(".fee-btn");
-
-    if (feeBtn) {
-        const id = feeBtn.dataset.id;
-        const student = students.find(s => s._id === id);
-        currentFeeStudent = student;
-        document.getElementById("feeStudentName").textContent = student.studentName;
-        document.getElementById("feeMonth").value = "";
-        document.getElementById("feeAmount").value = student.fee;
-        document.getElementById("feeDate").value = new Date().toISOString().split("T")[0];
-        feeModal.show();
-        return;
-    }
 
     if (delBtn) {
         const id = delBtn.dataset.id;
@@ -203,102 +184,3 @@ document.getElementById("exportBtn").addEventListener("click", function () {
 });
 
 loadStudents();
-
-// ==========================
-// Fee Payments
-// ==========================
-const FEE_API = "/api/fee-payments";
-
-async function loadFeePayments() {
-    try {
-        const response = await fetch(FEE_API, { headers: authHeaders() });
-        if (handleAuthError(response)) return;
-        feePayments = await response.json();
-        renderFeePayments();
-    } catch (err) {
-        feeTableBody.innerHTML = `<tr><td colspan="6" class="text-center text-secondary py-4">Could not load fee payments.</td></tr>`;
-    }
-}
-
-function renderFeePayments() {
-    if (feePayments.length === 0) {
-        feeTableBody.innerHTML = `<tr><td colspan="6" class="text-center text-secondary py-4">No fee payments recorded yet.</td></tr>`;
-        return;
-    }
-    feeTableBody.innerHTML = feePayments.map(p => `
-        <tr>
-            <td>${p.paymentId}</td>
-            <td>${p.studentName}</td>
-            <td>${p.month}</td>
-            <td>Rs. ${Number(p.amount).toLocaleString()}</td>
-            <td>${p.date}</td>
-            <td><button type="button" class="btn btn-sm btn-danger delete-fee-btn" data-id="${p._id}"><i class="fa-solid fa-trash"></i></button></td>
-        </tr>
-    `).join("");
-}
-
-saveFeeBtn.addEventListener("click", async function () {
-    const month = document.getElementById("feeMonth").value.trim();
-    const amount = document.getElementById("feeAmount").value.trim();
-    const date = document.getElementById("feeDate").value;
-
-    if (!month || !amount || !date) {
-        Swal.fire({ icon: "warning", title: "Missing Information", text: "Please fill all fields." });
-        return;
-    }
-
-    try {
-        const response = await fetch(FEE_API, {
-            method: "POST", headers: authHeaders(),
-            body: JSON.stringify({
-                studentId: currentFeeStudent._id,
-                studentName: currentFeeStudent.studentName,
-                amount, month, date
-            })
-        });
-        if (handleAuthError(response)) return;
-        const data = await response.json();
-        if (!response.ok) {
-            Swal.fire({ icon: "error", title: "Error", text: data.message || "Could not record payment." });
-            return;
-        }
-        feeModal.hide();
-        Swal.fire({ icon: "success", title: "Payment Recorded", text: `Fee payment added to Cash in Hand.` });
-        loadFeePayments();
-    } catch (err) {
-        Swal.fire({ icon: "error", title: "Connection Error", text: "Could not reach the server." });
-    }
-});
-
-feeTableBody.addEventListener("click", async function (e) {
-    const delBtn = e.target.closest(".delete-fee-btn");
-    if (!delBtn) return;
-
-    const id = delBtn.dataset.id;
-
-    Swal.fire({
-        title: "Delete this payment record?",
-        text: "This will remove it from Cash in Hand too.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#dc3545",
-        cancelButtonColor: "#6c757d",
-        confirmButtonText: "Yes, Delete"
-    }).then(async (result) => {
-        if (!result.isConfirmed) return;
-        try {
-            const response = await fetch(`${FEE_API}/${id}`, { method: "DELETE", headers: authHeaders() });
-            if (handleAuthError(response)) return;
-            if (!response.ok) {
-                Swal.fire({ icon: "error", title: "Error", text: "Could not delete payment record." });
-                return;
-            }
-            Swal.fire({ icon: "success", title: "Deleted", text: "Payment record deleted." });
-            loadFeePayments();
-        } catch (err) {
-            Swal.fire({ icon: "error", title: "Connection Error", text: "Could not reach the server." });
-        }
-    });
-});
-
-loadFeePayments();
