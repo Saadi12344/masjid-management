@@ -35,6 +35,17 @@ connectDB();
 // =====================================================
 
 app.use(cors());
+
+
+// Disable caching for all API responses — data changes frequently,
+// browser should never serve a stale cached copy (fixes 304 issue).
+app.set("etag", false);
+app.use("/api", (req, res, next) => {
+    res.set("Cache-Control", "no-store");
+    next();
+});
+
+app.use(express.json());
 app.use(express.json());
 
 
