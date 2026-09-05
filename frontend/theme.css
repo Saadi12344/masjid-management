@@ -1,0 +1,387 @@
+/* ==========================
+   Masjid Management - Bootstrap Theme
+   Load AFTER bootstrap.min.css
+========================== */
+
+:root{
+    --brand: #1d3557;
+    --brand-dark: #14243d;
+    --brand-accent: #c9a24b;
+    --sidebar-width: 270px;
+    --surface: #ffffff;
+    --surface-2: #f4f6f9;
+    --text-main: #212529;
+    --text-muted: #6c757d;
+    --border-soft: #eef0f2;
+}
+
+[data-bs-theme="dark"]{
+    --surface: #1e2530;
+    --surface-2: #12161d;
+    --text-main: #e8eaed;
+    --text-muted: #9aa4b2;
+    --border-soft: #2b333f;
+}
+
+body{
+    background:var(--surface-2);
+    font-family:'Poppins', Arial, sans-serif;
+    font-size:1rem;
+    color:var(--text-main);
+    transition:background .2s, color .2s;
+}
+
+/* ==========================
+   Top Navbar
+========================== */
+.app-topbar{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:68px;
+    background:var(--surface);
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 1.75rem;
+    z-index:1040;
+    transition:background .2s;
+    flex-wrap:nowrap;
+    overflow:hidden;
+    gap:.75rem;
+}
+
+.app-topbar > div{
+    display:flex;
+    align-items:center;
+    min-width:0;
+}
+
+.topbar-brand{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    font-weight:700;
+    font-size:1.25rem;
+    color:var(--brand);
+    min-width:0;
+    overflow:hidden;
+}
+
+.topbar-brand span{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:220px;
+}
+
+.theme-toggle{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    border:1px solid var(--border-soft);
+    background:var(--surface-2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    color:var(--text-main);
+    transition:.2s;
+}
+
+.theme-toggle:hover{
+    background:var(--brand);
+    color:#fff;
+    border-color:var(--brand);
+}
+
+/* ==========================
+   Sidebar
+========================== */
+.app-sidebar{
+    width:var(--sidebar-width);
+    min-height:calc(100vh - 68px);
+    background:linear-gradient(180deg, var(--brand) 0%, var(--brand-dark) 100%);
+    position:fixed;
+    top:68px;
+    left:0;
+    padding:1.75rem 1.25rem;
+    z-index:1030;
+}
+
+.app-sidebar .nav-link{
+    color:rgba(255,255,255,.85);
+    border-radius:10px;
+    padding:.8rem 1rem;
+    margin-bottom:.4rem;
+    font-weight:500;
+    font-size:1.02rem;
+    display:flex;
+    align-items:center;
+    gap:.8rem;
+    transition:.2s;
+}
+
+.app-sidebar .nav-link i{
+    width:20px;
+    text-align:center;
+    font-size:1.05rem;
+}
+
+.app-sidebar .nav-link:hover{
+    background:rgba(255,255,255,.12);
+    color:#fff;
+}
+
+.app-sidebar .nav-link.active{
+    background:#fff;
+    color:var(--brand);
+    font-weight:600;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+
+/* ==========================
+   Main content offset
+========================== */
+.app-main{
+    margin-left:var(--sidebar-width);
+    margin-top:68px;
+    padding:2.25rem 2.5rem;
+    min-height:calc(100vh - 68px);
+    max-width:1400px;
+}
+
+@media(max-width:900px){
+    .app-sidebar{
+        position:fixed;
+        width:280px;
+        min-height:100vh;
+        top:0;
+        left:0;
+        transform:translateX(-100%);
+        transition:transform .25s ease;
+        z-index:1050;
+        padding-top:1.75rem;
+    }
+    .app-sidebar.open{
+        transform:translateX(0);
+    }
+    .app-main{margin-left:0;margin-top:68px;padding:1.25rem;}
+    .app-topbar{padding:0 .85rem;}
+    .topbar-brand span{max-width:130px;font-size:1.05rem;}
+    .topbar-brand i{font-size:1.1rem;}
+}
+
+@media(max-width:420px){
+    .topbar-brand span{max-width:90px;}
+    .app-topbar .fa-bell{display:none;}
+    .admin-chip{padding:.35rem .6rem;font-size:.8rem;}
+}
+
+.sidebar-toggle-btn{
+    display:none;
+    width:38px;
+    height:38px;
+    border-radius:8px;
+    border:1px solid var(--border-soft);
+    background:var(--surface-2);
+    color:var(--text-main);
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+
+@media(max-width:900px){
+    .sidebar-toggle-btn{display:flex;}
+}
+
+.sidebar-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:1045;
+}
+
+.sidebar-backdrop.show{
+    display:block;
+}
+
+/* ==========================
+   Page header
+========================== */
+.page-header{
+    background:var(--surface);
+    border-radius:14px;
+    padding:1.5rem 1.75rem;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    margin-bottom:2rem;
+    transition:background .2s;
+}
+
+.page-header h1{
+    font-size:1.75rem;
+    font-weight:700;
+    margin-bottom:.2rem;
+    color:var(--text-main);
+}
+
+.page-header p{
+    color:var(--text-muted);
+    margin-bottom:0;
+    font-size:.95rem;
+}
+
+.admin-chip{
+    background:#eef2f7;
+    color:var(--brand);
+    padding:.4rem .9rem;
+    border-radius:30px;
+    font-weight:600;
+    font-size:.9rem;
+}
+
+[data-bs-theme="dark"] .admin-chip{
+    background:rgba(201,162,75,.18);
+    color:var(--brand-accent);
+}
+
+/* ==========================
+   Cards
+========================== */
+.stat-card{
+    border:none;
+    border-radius:16px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    transition:.25s;
+    text-decoration:none;
+    color:var(--text-main);
+    display:block;
+    background:var(--surface);
+    padding:1.75rem !important;
+}
+
+.stat-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 8px 20px rgba(0,0,0,.12);
+    color:var(--text-main);
+}
+
+.stat-card h6{
+    font-size:.95rem;
+}
+
+.stat-card h3{
+    font-size:1.9rem;
+}
+
+.stat-icon{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:1.4rem;
+    margin-bottom:1.1rem;
+}
+
+.bg-icon-staff{background:#6b4ea6;}
+.bg-icon-donation{background:var(--brand);}
+.bg-icon-rental{background:#b5762e;}
+.bg-icon-student{background:#2f7a6b;}
+
+.form-card, .table-card{
+    border:none;
+    border-radius:16px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    background:var(--surface);
+    transition:background .2s;
+}
+
+.form-card .card-header, .table-card .card-header{
+    background:var(--surface);
+    border-bottom:1px solid var(--border-soft);
+    font-weight:600;
+    font-size:1.05rem;
+    border-radius:16px 16px 0 0 !important;
+    padding:1.15rem 1.4rem;
+    color:var(--text-main);
+}
+
+.form-card .card-body, .table-card .card-body{
+    padding:1.5rem;
+}
+
+/* ==========================
+   Buttons
+========================== */
+.btn-brand{
+    background:var(--brand);
+    border-color:var(--brand);
+    color:#fff;
+}
+.btn-brand:hover{
+    background:var(--brand-dark);
+    border-color:var(--brand-dark);
+    color:#fff;
+}
+
+.modal-header-brand{
+    background:var(--brand);
+    color:#fff;
+}
+
+/* ==========================
+   Table tweaks
+========================== */
+.table thead th{
+    background:var(--brand);
+    color:#fff;
+    font-weight:600;
+    border:none;
+    white-space:nowrap;
+}
+
+.table tbody tr:hover{
+    background:#f8f9fa;
+}
+
+/* ==========================
+   Login page
+========================== */
+.login-wrapper{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg, var(--brand) 0%, #0a1830 100%);
+}
+
+.login-card{
+    background:#fff;
+    border-radius:18px;
+    padding:2.5rem;
+    width:100%;
+    max-width:420px;
+    box-shadow:0 15px 40px rgba(0,0,0,.25);
+    border-top:4px solid var(--brand-accent);
+}
+
+.login-card .logo{
+    font-size:2.5rem;
+    text-align:center;
+    margin-bottom:.5rem;
+    color:var(--brand);
+}
+
+.login-card h1{
+    font-size:1.4rem;
+    font-weight:700;
+    text-align:center;
+    margin-bottom:1.75rem;
+    color:#212529;
+}
